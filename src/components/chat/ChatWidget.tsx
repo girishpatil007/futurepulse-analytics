@@ -41,10 +41,10 @@ export function ChatWidget() {
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
         <div className="w-96 h-[600px] glass-panel rounded-lg flex flex-col overflow-hidden animate-fade-up">
-          <div className="p-4 border-b border-white/10 flex items-center justify-between">
+          <div className="p-4 border-b border-white/10 flex items-center justify-between bg-gradient-to-r from-purple-500/50 to-blue-900/50">
             <div className="flex items-center gap-2">
-              <Brain className="w-6 h-6 text-primary" />
-              <span className="font-semibold">Future Pulse AI</span>
+              <Brain className="w-6 h-6 text-purple-300" />
+              <span className="font-semibold text-white">Future Pulse AI</span>
             </div>
             <Button
               variant="ghost"
@@ -63,8 +63,8 @@ export function ChatWidget() {
                 className={cn(
                   "max-w-[80%] rounded-lg p-3",
                   message.role === "user"
-                    ? "bg-primary/20 ml-auto"
-                    : "bg-secondary mr-auto"
+                    ? "bg-purple-500/20 ml-auto"
+                    : "bg-blue-900/20 mr-auto"
                 )}
               >
                 {message.content}
@@ -72,7 +72,7 @@ export function ChatWidget() {
             ))}
           </div>
 
-          <div className="p-4 border-t border-white/10">
+          <div className="p-4 border-t border-white/10 bg-gradient-to-r from-purple-500/10 to-blue-900/10">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -84,10 +84,14 @@ export function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1"
+                className="flex-1 bg-white/5 border-white/10 focus:border-purple-500/50"
                 disabled={isLoading}
               />
-              <Button type="submit" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800"
+              >
                 <Send className="w-4 h-4" />
               </Button>
             </form>
@@ -96,7 +100,7 @@ export function ChatWidget() {
       ) : (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full w-14 h-14 animate-fade-up"
+          className="rounded-full w-14 h-14 animate-fade-up bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800"
         >
           <Brain className="w-6 h-6" />
         </Button>
