@@ -4,11 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Brain, Send, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+import { Message } from "@/types/chat";
+import { handleChatMessage } from "@/api/chat";
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,20 +19,13 @@ export function ChatWidget() {
 
     try {
       setIsLoading(true);
-      const userMessage = { role: "user", content: input };
+      const userMessage: Message = { role: "user", content: input };
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-      });
-
-      if (!response.ok) throw new Error("Failed to get response");
-
-      const data = await response.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
+      const response = await handleChatMessage(input);
+      const assistantMessage: Message = { role: "assistant", content: response };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       toast({
         title: "Error",

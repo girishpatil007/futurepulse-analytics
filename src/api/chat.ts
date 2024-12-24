@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function handleChatMessage(message: string) {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+  const genAI = new GoogleGenerativeAI("AIzaSyBpvqSOdBFZcuakjv3CpJd5zl92eDNx58w");
   const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
   try {
