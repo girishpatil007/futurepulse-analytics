@@ -12,15 +12,15 @@ const mockData = {
   })),
   recommendations: [
     {
-      type: "warning",
+      type: "warning" as const,
       message: "Low stock alert: Product XYZ is below reorder point",
     },
     {
-      type: "info",
+      type: "info" as const,
       message: "Seasonal trend detected: Consider increasing inventory for upcoming peak",
     },
     {
-      type: "success",
+      type: "success" as const,
       message: "Optimal stock levels maintained for Category A products",
     },
   ],
