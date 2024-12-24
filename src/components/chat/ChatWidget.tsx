@@ -6,6 +6,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Message } from "@/types/chat";
 import { handleChatMessage } from "@/api/chat";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -98,12 +104,21 @@ export function ChatWidget() {
           </div>
         </div>
       ) : (
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="rounded-full w-14 h-14 animate-fade-up bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800"
-        >
-          <Brain className="w-6 h-6" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => setIsOpen(true)}
+                className="rounded-full w-14 h-14 animate-fade-up bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800"
+              >
+                <Brain className="w-6 h-6" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="bg-gradient-to-r from-purple-500 to-blue-900 text-white border-none">
+              <p>Do You Have Any Doubt?</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </div>
   );
