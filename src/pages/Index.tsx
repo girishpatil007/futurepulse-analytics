@@ -5,6 +5,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { RecommendationCard } from "@/components/dashboard/RecommendationCard";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const mockData = {
   timeline: Array.from({ length: 12 }, (_, i) => ({
@@ -107,7 +108,9 @@ export default function Index() {
         <RecommendationCard recommendations={mockData.recommendations} />
       </div>
 
-      <ChatWidget />
+      <TooltipProvider>
+        <ChatWidget />
+      </TooltipProvider>
     </div>
   );
 }
