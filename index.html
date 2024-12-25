@@ -1,55 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Future Pulse - Inventory Prediction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <link rel="stylesheet" href="/src/styles/main.css">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>futurepulse-analytics</title>
+    <meta name="description" content="Lovable Generated Project" />
+    <meta name="author" content="Lovable" />
+    <meta property="og:image" content="/og-image.png" />
+  </head>
 
-<body>
+  <body>
     <div id="root"></div>
-    <div id="chat-widget" class="fixed bottom-4 right-4 z-50">
-        <div id="chat-container"></div>
-    </div>
-
-    <script type="module">
-        import Header from './src/components/Header.tsx';
-        import UploadForm from './src/components/UploadForm.tsx';
-        import { initializeCharts, createChartOptions, createGradient } from './src/utils/chartUtils.ts';
-        import { ChatWidget } from './src/components/chat/ChatWidget.tsx';
-        
-        // Initialize React components
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(
-            React.createElement(React.Fragment, null,
-                React.createElement(Header),
-                React.createElement(UploadForm)
-            )
-        );
-
-        // Initialize chat widget
-        const chatContainer = document.getElementById('chat-container');
-        const chatRoot = ReactDOM.createRoot(chatContainer);
-        chatRoot.render(React.createElement(ChatWidget));
-
-        // Initialize charts
-        window.charts = initializeCharts();
-        window.updateCharts = function(data) {
-            // Update chart data implementation
-            const trendChart = window.charts.trendChart;
-            if (trendChart) {
-                trendChart.data.labels = data.labels;
-                trendChart.data.datasets[0].data = data.values;
-                trendChart.update();
-            }
-        };
-    </script>
-</body>
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
