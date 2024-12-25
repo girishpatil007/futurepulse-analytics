@@ -1,4 +1,26 @@
-import { Chart, ChartConfiguration } from 'chart.js/auto';
+import { Chart, ChartConfiguration } from 'chart.js';
+import {
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+
+// Register Chart.js components
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 export function createGradient(colorStart: string, colorEnd: string) {
     const ctx = document.createElement('canvas').getContext('2d');
