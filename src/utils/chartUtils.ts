@@ -1,3 +1,5 @@
+import { Chart, ChartConfiguration } from 'chart.js/auto';
+
 export function createGradient(colorStart: string, colorEnd: string) {
     const ctx = document.createElement('canvas').getContext('2d');
     if (!ctx) return undefined;
@@ -44,13 +46,13 @@ export function createChartOptions(yLabel: string, xLabel: string) {
 }
 
 export function initializeCharts() {
-    const charts: any = {};
+    const charts: { [key: string]: Chart } = {};
     
     const trendChartElement = document.getElementById('trendChart');
     if (trendChartElement) {
         const ctx = (trendChartElement as HTMLCanvasElement).getContext('2d');
         if (ctx) {
-            charts.trendChart = new Chart(ctx, {
+            const config: ChartConfiguration = {
                 type: 'line',
                 data: {
                     labels: [],
@@ -64,7 +66,8 @@ export function initializeCharts() {
                     }]
                 },
                 options: createChartOptions('Quantity', 'Time')
-            });
+            };
+            charts.trendChart = new Chart(ctx, config);
         }
     }
     
