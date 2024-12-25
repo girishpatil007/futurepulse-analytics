@@ -1,162 +1,661 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>futurepulse-analytics</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-    <meta property="og:image" content="/og-image.png" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Pulse - Inventory Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-      .glass-panel {
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div id="root"></div>
-    
-    <!-- Chat Widget Container -->
-    <div id="chat-widget" class="fixed bottom-4 right-4 z-50">
-      <div id="chat-container"></div>
-    </div>
-
-    <!-- Required Scripts -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@google/generative-ai"></script>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <style>
+        :root {
+            --primary: #0A0F1C;
+            --secondary: #131B2E;
+            --accent: #00d9ff;
+            --text: #E4E6F0;
+            --gradient: linear-gradient(135deg, #6C63FF, #B166FF);
+        }
 
-    <!-- Chat Widget Script -->
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--primary);
+            color: var(--text);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(177, 102, 255, 0.1) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 40px;
+            }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg) translate(-50%, -50%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translate(-100%, -100%); }
+            100% { transform: rotate(45deg) translate(100%, 100%); }
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .title span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .upload-section {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .button-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .upload-button, .predict-button {
+            width: 100%;
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .upload-button {
+            background: var(--secondary);
+            color: var(--text);
+            border: 2px solid var(--accent);
+        }
+
+        .predict-button {
+            background: var(--gradient);
+            color: white;
+            margin-top: 20px;
+        }
+
+        .button-illustration {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            top: -50%;
+            left: -50%;
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .upload-button:hover .button-illustration,
+        .predict-button:hover .button-illustration {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .upload-button:hover,
+        .predict-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(108, 99, 255, 0.2);
+        }
+
+        .results {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: rgba(10, 15, 28, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .insight-box {
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient);
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading-animation {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border: 4px solid var(--accent);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .insights-dashboard {
+            margin-top: 30px;
+            background: rgba(10, 15, 28, 0.5);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .insight-card {
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .insight-card.high-risk {
+            border-left-color: #FF6B6B;
+        }
+
+        .insight-card.moderate-risk {
+            border-left-color: #FFC145;
+        }
+
+        .insight-card.low-risk {
+            border-left-color: #4ECB71;
+        }
+
+        .recommendation-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(177, 102, 255, 0.2));
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        /* Icon styles */
+        .icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+
+        .upload-icon, .predict-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .upload-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid currentColor;
+            border-right: 2px solid currentColor;
+            transform: translate(-50%, -30%) rotate(-45deg);
+        }
+
+        .predict-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: currentColor;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"></div>
+            <h1 class="title">Future<span>pulse</span></h1>
+        </div>
+
+        <p class="description">
+            Unlock the power of predictive analytics for your inventory management. Our AI-powered tool forecasts future needs with precision and clarity.
+        </p>
+
+        <form id="prediction-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="upload-section">
+                <input type="file" id="file-input" class="file-input" name="data_file" accept=".csv,.xlsx">
+                <div class="button-wrapper">
+                    <button type="button" class="upload-button" onclick="document.getElementById('file-input').click()">
+                        <span class="upload-icon"></span>
+                        Upload Data in csv/excel
+                        <div class="button-illustration"></div>
+                    </button>
+                    <button type="submit" class="predict-button">
+                        <span class="predict-icon"></span>
+                        Predict Future Inventory
+                        <div class="button-illustration"></div>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div id="loadingContainer" style="--speed-of-animation: 0.9s; --gap: 6px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: var(--gap);">
+                <span style="width: 4px; height: 50px; background: var(--first-color);"></span>
+                <span style="width: 4px; height: 50px; background: var(--second-color);"></span>
+                <span style="width: 4px; height: 50px; background: var(--third-color);"></span>
+                <span style="width: 4px; height: 50px; background: var(--fourth-color);"></span>
+                <span style="width: 4px; height: 50px; background: var(--fifth-color);"></span>
+            </div>
+            <p>Processing your data...</p>
+        </div>
+
+        <div class="results">
+            <h3>Prediction Results</h3>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h4>Inventory Trend Prediction</h4>
+                    <canvas id="trendChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Stock Distribution</h4>
+                    <canvas id="distributionChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Monthly Analysis</h4>
+                    <canvas id="monthlyBarChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>Seasonal Patterns</h4>
+                    <canvas id="seasonalityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="insights-dashboard">
+                <h4>AI-Powered Insights</h4>
+                <div class="insights-grid" id="insightsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget Container -->
+    <div id="chat-widget" class="fixed bottom-4 right-4 z-50">
+        <div id="chat-container"></div>
+    </div>
+
     <script>
-      const genAI = new GoogleGenerativeAI("AIzaSyBpvqSOdBFZcuakjv3CpJd5zl92eDNx58w");
+        // File input handling
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            let fileName = e.target.files[0]?.name || 'No file selected';
+            document.querySelector('.upload-button').innerHTML = `
+                <span class="upload-icon"></span>
+                ${fileName}
+                <div class="button-illustration"></div>
+            `;
+        });
 
-      async function handleChatMessage(message) {
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        try {
-          const result = await model.generateContent(message);
-          const response = await result.response;
-          return response.text();
-        } catch (error) {
-          console.error("Error calling Gemini:", error);
-          throw error;
-        }
-      }
+        // Form submission
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            document.getElementById('loadingContainer').style.display = 'block';
 
-      class ChatWidget extends React.Component {
-        constructor(props) {
-          super(props);
-          this.state = {
-            isOpen: false,
-            messages: [],
-            input: "",
-            isLoading: false
-          };
-        }
+            fetch('/predict/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingContainer').style.display = 'none';
+                updateCharts(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loadingContainer').style.display = 'none';
+            });
+        });
 
-        handleSend = async () => {
-          if (!this.state.input.trim()) return;
-
-          try {
-            this.setState({ isLoading: true });
-            const userMessage = { role: "user", content: this.state.input };
-            this.setState(prev => ({
-              messages: [...prev.messages, userMessage],
-              input: ""
-            }));
-
-            const response = await handleChatMessage(this.state.input);
-            const assistantMessage = { role: "assistant", content: response };
-            this.setState(prev => ({
-              messages: [...prev.messages, assistantMessage]
-            }));
-          } catch (error) {
-            console.error("Chat error:", error);
-          } finally {
-            this.setState({ isLoading: false });
-          }
+        function createGradient(colorStart, colorEnd) {
+            const ctx = document.createElement('canvas').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, colorStart);
+            gradient.addColorStop(1, colorEnd);
+            return gradient;
         }
 
-        render() {
-          return React.createElement("div", null,
-            this.state.isOpen ? (
-              React.createElement("div", { 
-                className: "w-96 h-[600px] glass-panel rounded-lg flex flex-col overflow-hidden animate-fade-up"
-              },
-                React.createElement("div", { 
-                  className: "p-4 border-b border-white/10 flex items-center justify-between bg-gradient-to-r from-purple-500/50 to-blue-900/50"
+        function createChartOptions(yLabel, xLabel) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
                 },
-                  React.createElement("div", { 
-                    className: "flex items-center gap-2"
-                  },
-                    React.createElement("span", { 
-                      className: "font-semibold text-white"
-                    }, "Future Pulse AI")
-                  ),
-                  React.createElement("button", {
-                    onClick: () => this.setState({ isOpen: false }),
-                    className: "hover:bg-white/10 p-2 rounded"
-                  }, "×")
-                ),
-                React.createElement("div", {
-                  className: "flex-1 overflow-y-auto p-4 space-y-4"
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#E4E6F0',
+                            font: { family: 'Poppins' }
+                        }
+                    }
                 },
-                  this.state.messages.map((message, index) =>
-                    React.createElement("div", {
-                      key: index,
-                      className: `max-w-[80%] rounded-lg p-3 ${
-                        message.role === "user"
-                          ? "bg-purple-500/20 ml-auto"
-                          : "bg-blue-900/20 mr-auto"
-                      }`
-                    }, message.content)
-                  )
-                ),
-                React.createElement("div", {
-                  className: "p-4 border-t border-white/10 bg-gradient-to-r from-purple-500/10 to-blue-900/10"
-                },
-                  React.createElement("form", {
-                    onSubmit: (e) => {
-                      e.preventDefault();
-                      this.handleSend();
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: {
+                            color: '#E4E6F0',
+                            font: { family: 'Poppins' }
+                        }
                     },
-                    className: "flex gap-2"
-                  },
-                    React.createElement("input", {
-                      value: this.state.input,
-                      onChange: (e) => this.setState({ input: e.target.value }),
-                      placeholder: "Type your message...",
-                      className: "flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 text-white placeholder:text-white/50",
-                      disabled: this.state.isLoading
-                    }),
-                    React.createElement("button", {
-                      type: "submit",
-                      disabled: this.state.isLoading,
-                      className: "bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800 px-4 py-2 rounded text-white"
-                    }, "Send")
-                  )
-                )
-              )
-            ) : (
-              React.createElement("button", {
-                onClick: () => this.setState({ isOpen: true }),
-                className: "rounded-full w-14 h-14 animate-fade-up bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800 text-white flex items-center justify-center"
-              }, "💭")
-            )
-          );
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: {
+                            color: '#E4E6F0',
+                            font: { family: 'Poppins' }
+                        }
+                    }
+                }
+            };
         }
-      }
 
-      const container = document.getElementById('chat-container');
-      const root = ReactDOM.createRoot(container);
-      root.render(React.createElement(ChatWidget));
+        function initializeCharts() {
+            const charts = {};
+            
+            charts.trendChart = new Chart(document.getElementById('trendChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Predicted Inventory',
+                        data: [],
+                        borderColor: '#6C63FF',
+                        backgroundColor: createGradient('rgba(108, 99, 255, 0.2)', 'rgba(108, 99, 255, 0)'),
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: createChartOptions('Quantity', 'Time')
+            });
+            
+            // Initialize other charts similarly
+            return charts;
+        }
+
+        let charts = initializeCharts();
+
+        // Loading animation timeout
+        setTimeout(() => {
+            const loadingContainer = document.getElementById('loadingContainer');
+            loadingContainer.classList.add('hidden');
+        }, 5000);
+
+        // Chat Widget Implementation
+        const genAI = new GoogleGenerativeAI("AIzaSyBpvqSOdBFZcuakjv3CpJd5zl92eDNx58w");
+
+        async function handleChatMessage(message) {
+            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+            try {
+                const result = await model.generateContent(message);
+                const response = await result.response;
+                return response.text();
+            } catch (error) {
+                console.error("Error calling Gemini:", error);
+                throw error;
+            }
+        }
+
+        class ChatWidget extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    isOpen: false,
+                    messages: [],
+                    input: "",
+                    isLoading: false
+                };
+            }
+
+            handleSend = async () => {
+                if (!this.state.input.trim()) return;
+
+                try {
+                    this.setState({ isLoading: true });
+                    const userMessage = { role: "user", content: this.state.input };
+                    this.setState(prev => ({
+                        messages: [...prev.messages, userMessage],
+                        input: ""
+                    }));
+
+                    const response = await handleChatMessage(this.state.input);
+                    const assistantMessage = { role: "assistant", content: response };
+                    this.setState(prev => ({
+                        messages: [...prev.messages, assistantMessage]
+                    }));
+                } catch (error) {
+                    console.error("Chat error:", error);
+                } finally {
+                    this.setState({ isLoading: false });
+                }
+            }
+
+            render() {
+                return React.createElement("div", null,
+                    this.state.isOpen ? (
+                        React.createElement("div", { 
+                            className: "w-96 h-[600px] glass-panel rounded-lg flex flex-col overflow-hidden animate-fade-up"
+                        },
+                            React.createElement("div", { 
+                                className: "p-4 border-b border-white/10 flex items-center justify-between bg-gradient-to-r from-purple-500/50 to-blue-900/50"
+                            },
+                                React.createElement("div", { 
+                                    className: "flex items-center gap-2"
+                                },
+                                    React.createElement("span", { 
+                                        className: "font-semibold text-white"
+                                    }, "Future Pulse AI")
+                                ),
+                                React.createElement("button", {
+                                    onClick: () => this.setState({ isOpen: false }),
+                                    className: "hover:bg-white/10 p-2 rounded"
+                                }, "×")
+                            ),
+                            React.createElement("div", {
+                                className: "flex-1 overflow-y-auto p-4 space-y-4"
+                            },
+                                this.state.messages.map((message, index) =>
+                                    React.createElement("div", {
+                                        key: index,
+                                        className: `max-w-[80%] rounded-lg p-3 ${
+                                            message.role === "user"
+                                                ? "bg-purple-500/20 ml-auto"
+                                                : "bg-blue-900/20 mr-auto"
+                                        }`
+                                    }, message.content)
+                                )
+                            ),
+                            React.createElement("div", {
+                                className: "p-4 border-t border-white/10 bg-gradient-to-r from-purple-500/10 to-blue-900/10"
+                            },
+                                React.createElement("form", {
+                                    onSubmit: (e) => {
+                                        e.preventDefault();
+                                        this.handleSend();
+                                    },
+                                    className: "flex gap-2"
+                                },
+                                    React.createElement("input", {
+                                        value: this.state.input,
+                                        onChange: (e) => this.setState({ input: e.target.value }),
+                                        placeholder: "Type your message...",
+                                        className: "flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 text-white placeholder:text-white/50",
+                                        disabled: this.state.isLoading
+                                    }),
+                                    React.createElement("button", {
+                                        type: "submit",
+                                        disabled: this.state.isLoading,
+                                        className: "bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800 px-4 py-2 rounded text-white"
+                                    }, "Send")
+                                )
+                            )
+                        )
+                    ) : (
+                        React.createElement("button", {
+                            onClick: () => this.setState({ isOpen: true }),
+                            className: "rounded-full w-14 h-14 animate-fade-up bg-gradient-to-r from-purple-500 to-blue-900 hover:from-purple-600 hover:to-blue-800 text-white flex items-center justify-center"
+                        }, "💭")
+                    )
+                );
+            }
+        }
+
+        // Initialize chat widget
+        const container = document.getElementById('chat-container');
+        const root = ReactDOM.createRoot(container);
+        root.render(React.createElement(ChatWidget));
     </script>
-  </body>
+</body>
 </html>
